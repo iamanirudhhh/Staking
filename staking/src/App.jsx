@@ -7,7 +7,7 @@ function App() {
     <BrowserRouter>
         <Routes>
           <Route index element = {<StartingPlan/>}/>
-          <Route path = '/monthly' element = {<MonthlyPlan/>}/>
+          <Route path = '/monthly-plan' element = {<MonthlyPlan/>}/>
         </Routes>
       </BrowserRouter>   
   );

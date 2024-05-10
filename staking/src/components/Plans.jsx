@@ -4,7 +4,6 @@ import CardMedia from '@mui/material/CardMedia';
 import Card from '@mui/material/Card';
 import { Button, CardActionArea, CardActions } from '@mui/material';
 import Typography from '@mui/material/Typography';
-import { useNavigate } from 'react-router-dom';
 import blockImage from "../assets/block-rewards.webp";
 import lineImage from "../assets/lines.jpg";
 
@@ -28,14 +27,8 @@ const buttonStyle = {
 };
 
 
-export default function Plans({ heading, data }) {
+export default function Plans({ heading, data, goToMonthlyPlan }) {
   
-  const navigate = useNavigate();
-
-  const handleStakeClick = () => {
-    navigate.push('/monthly');
-  };
-
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardActionArea>
@@ -55,7 +48,7 @@ export default function Plans({ heading, data }) {
         </CardContent>
       </CardActionArea>
       <CardActions >
-        <Button size="large" sx={buttonStyle}  onClick={handleStakeClick}>
+        <Button size="large" sx={buttonStyle} onClick={goToMonthlyPlan}>
           STAKE
         </Button>
       </CardActions>

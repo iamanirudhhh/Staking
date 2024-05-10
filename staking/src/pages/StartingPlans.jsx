@@ -1,6 +1,14 @@
 import Plans from '../components/Plans';
+import { useNavigate} from 'react-router-dom';
 
 export default function StartingPlan() {
+    
+    const navigate = useNavigate(); 
+
+    const monthlyPlan = () => {
+        navigate('/monthly-plan');
+      };
+
     return (
         <div style={{
             display: 'flex',
@@ -20,7 +28,7 @@ export default function StartingPlan() {
                         <Plans heading="Up To 20% APY" data="Simple Deposit Daily Return" />
                     </div>
                     <div style={{ marginLeft: 50 }}>
-                        <Plans heading="Up To 60% APY" data="Simple Deposit Monthly Return" />
+                        <Plans heading="Up To 60% APY" data="Simple Deposit Monthly Return" goToMonthlyPlan={monthlyPlan} />
                     </div>
                 </div>
             </div>
