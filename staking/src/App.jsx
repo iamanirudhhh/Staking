@@ -1,6 +1,7 @@
 import {BrowserRouter, Routes, Route} from 'react-router-dom'
-import StartingPlan from "./pages/StartingPlans";
 import MonthlyPlan from "./pages/MonthlyPlans";
+import Staking from "./pages/Staking";
+import StartingPlan from "./pages/StartingPlans";
 
 function App() {
   return (
@@ -8,6 +9,7 @@ function App() {
         <Routes>
           <Route index element = {<StartingPlan/>}/>
           <Route path = '/monthly-plan' element = {<MonthlyPlan/>}/>
+          <Route path = '/staking' element = {<Staking/>}/>
         </Routes>
       </BrowserRouter>   
   );

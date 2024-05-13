@@ -1,5 +1,5 @@
-import Plans from '../components/Plans';
 import { useNavigate} from 'react-router-dom';
+import Plans from '../components/Plans';
 
 export default function StartingPlan() {
     
@@ -7,7 +7,11 @@ export default function StartingPlan() {
 
     const monthlyPlan = () => {
         navigate('/monthly-plan');
-      };
+    };
+
+    const dailyPlan = () => {
+        navigate('/staking');
+    };
 
     return (
         <div style={{
@@ -25,7 +29,7 @@ export default function StartingPlan() {
                 <h2 style={{ marginBottom: 20 }}>REWARDS SYSTEM</h2>
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
                     <div>
-                        <Plans heading="Up To 20% APY" data="Simple Deposit Daily Return" />
+                        <Plans heading="Up To 20% APY" data="Simple Deposit Daily Return" goToMonthlyPlan={dailyPlan}/>
                     </div>
                     <div style={{ marginLeft: 50 }}>
                         <Plans heading="Up To 60% APY" data="Simple Deposit Monthly Return" goToMonthlyPlan={monthlyPlan} />
