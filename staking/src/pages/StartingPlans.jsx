@@ -29,10 +29,10 @@ export default function StartingPlan() {
                 <h2 style={{ marginBottom: 20 }}>REWARDS SYSTEM</h2>
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
                     <div>
-                        <Plans heading="Up To 20% APY" data="Simple Deposit Daily Return" goToMonthlyPlan={dailyPlan}/>
+                        <Plans heading="Up To 36% APY" data="Simple Deposit Daily Return" goToMonthlyPlan={dailyPlan}/>
                     </div>
                     <div style={{ marginLeft: 50 }}>
-                        <Plans heading="Up To 60% APY" data="Simple Deposit Monthly Return" goToMonthlyPlan={monthlyPlan} />
+                        <Plans heading="Up To 70% APY" data="Simple Deposit Monthly Return" goToMonthlyPlan={monthlyPlan} />
                     </div>
                 </div>
             </div>

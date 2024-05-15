@@ -15,11 +15,14 @@
     "@mui/material": "^5.15.17",
     "@mui/styled-engine-sc": "^6.0.0-alpha.18",
     "@mui/styles": "^5.15.17",
+    "@web3-onboard/react": "^2.8.17",
+    "ethers": "^6.12.1",
     "lucide-react": "^0.378.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.23.1",
-    "styled-components": "^6.1.11"
+    "styled-components": "^6.1.11",
+    "web3": "^4.8.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
