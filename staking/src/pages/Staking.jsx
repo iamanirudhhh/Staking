@@ -2,6 +2,7 @@ import { useState,useEffect } from 'react';
 import Web3 from 'web3';
 import { Box, Button, Grid, Stack, styled, TextField } from '@mui/material';
 import { grey } from '@mui/material/colors';
+import { ethers } from "ethers";
 import tokenBalance from '../assets/ri_1.png';
 import stakedImg from '../assets/ri2.png';
 import claimableReward from '../assets/ri3.png';
@@ -9,6 +10,7 @@ import cardOne from '../assets/card_1_bg.jpg';
 import cardTwo from '../assets/card_2_bg.jpg';
 import cardThree from '../assets/card_3_bg.jpg';
 import tokenData  from '../components/Contract.json';
+import stakingData  from '../components/StakingContract.json';
 
 export default function Staking() {
 
@@ -20,6 +22,7 @@ export default function Staking() {
     const [userTotalDscBalance, setUserTotalDscBalance] = useState();
     const [userStakedToken, setUserStakedToken] = useState();
     const [userClaimableTokens, setUserClaimableTokens] = useState();
+
 
     useEffect(() => {
         if (connectedAddress &&!tokenImported) {
@@ -35,6 +38,10 @@ export default function Staking() {
             fetchTokenBalance();
         }
     }, [connectedAddress]);
+
+    const stakeTokens = async =>{
+        alert("chal bsdk")
+    }
 
     const handleButtonClick = () => 
         {
@@ -57,7 +64,6 @@ export default function Staking() {
         }
     };
 
-
     const addTokenToMetaMask = async () => {
         try {
             if (!connectedAddress) {
@@ -75,7 +81,7 @@ export default function Staking() {
                 params: {
                     type: 'ERC20',
                     options: {
-                        address: "0x95CCD7C892A71913a42A2e6FC7ba06B25a65dD90", 
+                        address: "0xf14630D0FCD7C3e971f612d6889D8eE84892e293", 
                         symbol: 'DSC' , 
                         decimals: 18, 
                     }
@@ -96,6 +102,7 @@ export default function Staking() {
         setUserTotalDscBalance(null);
         console.log("Disconnected from MetaMask");
     };
+    
 
     const showStakeFormHandler = () => {
         setShowStakeForm(true);
@@ -133,15 +140,15 @@ export default function Staking() {
                         <div className="row">
                             <div className="col-lg-4">
                                 <div className="card-bodys c_bg_1 card-body_img" style={{ backgroundImage: `url(${cardOne})`, width:350, height: 150, marginBottom: '25px', borderRadius: '20px' }}>
-                                    <div style={{gap:200, display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                    <div style={{ display:"flex", justifyContent: "space-between"}}>
                                         <img
                                             src={tokenBalance}
                                             width="50"
                                             alt=""
                                             className="img-fluid"
-                                            style={{ marginLeft: '30px', marginTop: '25px', marginBottom: '15px' }}
+                                            style={{ marginLeft:'30px', marginTop: '25px', marginBottom: '15px' }}
                                         />
-                                        <h2>
+                                        <h2 style={{ marginRight: '30px', marginTop: '25px', marginBottom: '15px' }}>
                                             {" "}
                                             <b>
                                             {userTotalDscBalance == undefined
@@ -153,7 +160,7 @@ export default function Staking() {
                                     <span style={{ fontWeight: 'bold', marginLeft: '30px' }}>Your Token Balance</span>
                                 </div>
                                 <div className="card-bodys c_bg_2 card-body_img" style={{ backgroundImage: `url(${cardTwo})`, width:350, height: 150, marginBottom: '25px', borderRadius: '20px' }}>
-                                    <div style={{gap:200, display:"flex", justifyContent:"center", alignItems:"center"}}>   
+                                    <div style={{display:"flex", justifyContent: "space-between"}}>   
                                         <img
                                             src={stakedImg}
                                             width="50"
@@ -161,7 +168,7 @@ export default function Staking() {
                                             className="img-fluid"
                                             style={{ marginLeft: '30px', marginTop: '25px', marginBottom: '15px' }}
                                         />
-                                        <h2>
+                                        <h2 style={{ marginRight: '30px', marginTop: '25px', marginBottom: '15px' }}>
                                             {" "}
                                             <b>
                                             {userStakedToken == undefined
@@ -172,8 +179,8 @@ export default function Staking() {
                                     </div>
                                     <span style={{ fontWeight: 'bold', marginLeft: '30px' }}>Your Token Staked</span>
                                 </div>
-                                <div className="card-bodys c_bg_3 mb-0 card-body_img" style={{ backgroundImage: `url(${cardThree})`, width:350, height: 150, borderRadius: '20px' }}>
-                                    <div style={{gap:200, display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                <div className="card-bodys c_bg_3 mb-0 card-body_img" style={{ backgroundImage: `url(${cardThree})`, width:350, height: 170, borderRadius: '20px' }}>
+                                    <div style={{display:"flex", justifyContent: "space-between"}}>
                                         <img
                                             src={claimableReward}
                                             width="50"
@@ -181,7 +188,7 @@ export default function Staking() {
                                             className="img-fluid"
                                             style={{ marginLeft: '30px', marginTop: '25px', marginBottom: '15px' }}
                                         />
-                                        <h2>
+                                        <h2 style={{ marginRight: '30px', marginTop: '25px', marginBottom: '15px' }}>
                                             {" "}
                                             <b>
                                             {userClaimableTokens == undefined
@@ -191,6 +198,8 @@ export default function Staking() {
                                         </h2>
                                     </div>
                                     <span style={{ fontWeight: 'bold', marginLeft: '30px' }}> Your Claimable Reward</span>
+                                    <RefreshButton variant="contained">Refresh</RefreshButton>
+                                    <p style={{ marginLeft: '30px' }}> Note: Refreshing cost GAS Fee </p>
                                 </div>
                             </div>
                         </div>
@@ -199,7 +208,7 @@ export default function Staking() {
                         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '80vh' }}>
                             <div style={{marginBottom:30}}>
                                 <Stack spacing={2} direction="row">
-                                    <FeatureButton variant="contained" active={showStakeForm} onClick={showStakeFormHandler}>Stake</FeatureButton>
+                                    <FeatureButton variant="contained" active={showStakeForm}  onClick={showStakeFormHandler}>Stake</FeatureButton>
                                     <FeatureButton variant="contained" active={showUnstakeForm} onClick={showUnstakeFormHandler}>Unstake</FeatureButton>
                                     <FeatureButton variant="contained" active={showClaimRewardForm} onClick={showClaimRewardFormHandler}>Claim Reward</FeatureButton>
                                 </Stack>
@@ -215,7 +224,7 @@ export default function Staking() {
                                             label="Enter Amount"
                                             type="number"
                                         />
-                                        <StakeButton variant="contained">Stake</StakeButton>
+                                        <StakeButton onClick={connectedAddress ? stakeTokens : connectToMetaMask} variant="contained">Stake</StakeButton>
                                     </Stack>
                                 </div>
                             )}
@@ -284,5 +293,16 @@ const StakeButton = styled(Button)(({ theme }) => ({
         backgroundColor: grey[800],
     },
     width: 500,
+    textTransform: 'none'
+}));
+
+const RefreshButton = styled(Button)(({ theme }) => ({
+    backgroundColor: '#A43771',
+    '&:hover': {
+        backgroundColor: '#A43771',
+    },
+    width: 90,
+    height: 30,
+    marginLeft: 20,
     textTransform: 'none'
 }));
