@@ -282,8 +282,8 @@ export default function Staking() {
             </Stack>
 
             <Box sx={{ flexGrow: 1 }}>
-                <Grid container spacing={2} >
-                    <Grid xs={5} display="flex" justifyContent="center" alignItems="center">
+                <Grid sx={{marginLeft:20}} container spacing={2} >
+                    <Grid  display="flex" justifyContent="center" alignItems="center">
                         <div className="row">
                             <div className="col-lg-4">
                                 <div className="card-bodys c_bg_1 card-body_img" style={{ backgroundImage: `url(${cardOne})`, width:350, height: 150, marginBottom: '25px', borderRadius: '20px' }}>
@@ -351,7 +351,7 @@ export default function Staking() {
                             </div>
                         </div>
                     </Grid>
-                    <Grid xs={7} display="flex" justifyContent="center" alignItems="center">
+                    <Grid  sx={{marginLeft:20}}display="flex" justifyContent="center" alignItems="center">
                         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '80vh' }}>
                             <div style={{marginBottom:30}}>
                                 <Stack spacing={2} direction="row">
