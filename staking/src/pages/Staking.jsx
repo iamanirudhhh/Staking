@@ -22,26 +22,174 @@ export default function Staking() {
     const [userTotalDscBalance, setUserTotalDscBalance] = useState();
     const [userStakedToken, setUserStakedToken] = useState();
     const [userClaimableTokens, setUserClaimableTokens] = useState();
+    const [unStakeToken, setUnStakeToken] = useState();
 
+
+    let userAddress;
 
     useEffect(() => {
-        if (connectedAddress &&!tokenImported) {
-            const fetchTokenBalance = async () => {
-                const web3 = new Web3(window.ethereum);
-                const contractABI = tokenData.abi; 
-                const contractAddress = tokenData.Dscaddress; 
-                const contract = new web3.eth.Contract(contractABI, contractAddress);
-                const balance = await contract.methods.balanceOf(connectedAddress).call();
-                const truncatedBalance = balance.toString().slice(0, -18);
-                setUserTotalDscBalance(truncatedBalance);
-            };
-            fetchTokenBalance();
-        }
-    }, [connectedAddress]);
+        if (!connectedAddress) {
+            connectToMetaMask();
+        } 
+        else if (connectedAddress) 
+        {
 
-    const stakeTokens = async =>{
-        alert("chal bsdk")
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();    
+            userAddress = connectedAddress;
+            let USERADDRESS = userAddress;
+            console.log(USERADDRESS);
+            const fetchData = async () => {
+            try {
+              const DscAddress = tokenData.Dscaddress;
+              const DscABI = tokenData.abi;
+              const DscStakingAddress = stakingData.address;
+              const DscStakingABI = stakingData.abi;
+              const dscInstance = new ethers.Contract(
+                DscAddress,
+                DscABI,
+                signer
+              );
+              const stakingInstance = new ethers.Contract(
+                DscStakingAddress,
+                DscStakingABI,
+                signer
+              );
+              const userTokenBalance = await dscInstance.balanceOf(USERADDRESS);
+              const formattedBalance = ethers.utils.formatUnits(userTokenBalance);
+              setUserTotalDscBalance(formattedBalance);
+              const userStakedTokens =
+                await stakingInstance.AddressToStakingDetails(USERADDRESS);
+              const finalTotalStakedTokens = ethers.utils.formatUnits(
+                userStakedTokens.stakedAmount
+              );
+              setUserStakedToken(finalTotalStakedTokens);
+              const finalClaimableTokens = ethers.utils.formatUnits(
+                userStakedTokens.claimableRewards
+              );
+              let resultString = finalClaimableTokens.toString().slice(0, 8);
+              setUserClaimableTokens(resultString);
+            } catch (error) {
+              console.error("Error fetching data:", error.message);
+            }
+          };
+          fetchData();
+        }
+      }, [userTotalDscBalance, userStakedToken, userClaimableTokens, connectedAddress]);
+
+    const stakeTokens = async () => {
+        if (!connectedAddress ||!userStakedToken) {
+            alert("error");
+        }
+
+        // Create a provider and signer
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+
+        // Instantiate the token contract
+        const tokenContract = new ethers.Contract(tokenData.Dscaddress, tokenData.abi, signer);
+
+        // Approve the staking contract to spend tokens on behalf of the user
+        const amountInWei = ethers.utils.parseEther(userStakedToken);
+        console.log(amountInWei);
+        const approvalTx = await tokenContract.approve(stakingData.address, amountInWei);
+        await approvalTx.wait();
+
+        // Instantiate the staking contract
+        const stakingContract = new ethers.Contract(stakingData.address, stakingData.abi, signer);
+        
+        // Stake the approved amount of tokens
+        const stakeTx = await stakingContract.stakeTokens(amountInWei);
+        await stakeTx.wait();
+
+        console.log(`Successfully staked ${amountInWei} tokens.`);
+    };
+
+    const updaterewards = async () => {
+        try {
+
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();
+    
+          const DscStakingAddress = stakingData.address;
+          const DscStakingABI = stakingData.abi;
+          const stakingInstance = new ethers.Contract(
+            DscStakingAddress,
+            DscStakingABI,
+            signer
+          );
+          await stakingInstance.calcuateRewards(connectedAddress);
+          const userStakedTokens = await stakingInstance.AddressToStakingDetails(
+            connectedAddress
+          );
+          const finalClaimableTokens = ethers.utils.formatUnits(
+            userStakedTokens.claimableRewards
+          );
+          let resultString = finalClaimableTokens.toString().slice(0, 8);
+          if (resultString > 0) {
+            setUserClaimableTokens(resultString);
+          } else setUserClaimableTokens("0.0");
+        } catch (err) {
+          console.log("error", err.message);
+        }
+      };
+
+    const unStakeTokens = async () => {
+    try {
+        if (!connectedAddress ) {
+            connectToMetaMask();
+        }
+        // console.log("Inside Unstaking..")
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+
+        const DscStakingAddress = stakingData.address;
+        const DscStakingABI = stakingData.abi;
+        const stakingInstance = new ethers.Contract(
+            DscStakingAddress,
+            DscStakingABI,
+            signer
+        );
+
+        const amountToUnstake = unStakeToken;
+        const amountToUnstakeInWei = ethers.utils.parseEther(
+        amountToUnstake.toString()
+        );
+        await stakingInstance.unStakeTokens(amountToUnstakeInWei);
+        setUnStakeToken(" ");
+    } catch (err) {
+        console.log("error", err.message);
     }
+    };
+    
+    const claimRewards = async () => {
+    try {
+        if (!connectedAddress ) {
+            connectToMetaMask();
+        }
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        
+
+        const DscAddress = tokenData.Dscaddress;
+        const DscABI = tokenData.abi;
+        const DscStakingAddress = stakingData.address;
+        const DscStakingABI = stakingData.abi;
+        const stakingInstance = new ethers.Contract(
+            DscStakingAddress,
+            DscStakingABI,
+            signer
+        );
+        
+        const amountToClaim = userClaimableTokens;
+        const amountToClaimInWei = ethers.utils.parseEther(
+        amountToClaim.toString(),
+        );
+        console.log(amountToClaimInWei);
+        await stakingInstance.claimRewards(amountToClaimInWei);
+        setClaimToken(" ");
+    } catch (error) {}
+    };
 
     const handleButtonClick = () => 
         {
@@ -81,7 +229,7 @@ export default function Staking() {
                 params: {
                     type: 'ERC20',
                     options: {
-                        address: "0xf14630D0FCD7C3e971f612d6889D8eE84892e293", 
+                        address: "0xbf7f01B763B1486F6CAc76464334a1E02A490B1A", 
                         symbol: 'DSC' , 
                         decimals: 18, 
                     }
@@ -198,7 +346,7 @@ export default function Staking() {
                                         </h2>
                                     </div>
                                     <span style={{ fontWeight: 'bold', marginLeft: '30px' }}> Your Claimable Reward</span>
-                                    <RefreshButton variant="contained">Refresh</RefreshButton>
+                                    <RefreshButton variant="contained" onClick={() => updaterewards()}>Refresh</RefreshButton>
                                     <p style={{ marginLeft: '30px' }}> Note: Refreshing cost GAS Fee </p>
                                 </div>
                             </div>
@@ -223,6 +371,7 @@ export default function Staking() {
                                             id="outlined-number"
                                             label="Enter Amount"
                                             type="number"
+                                            onChange={(e) => setUserStakedToken(e.target.value)}
                                         />
                                         <StakeButton onClick={connectedAddress ? stakeTokens : connectToMetaMask} variant="contained">Stake</StakeButton>
                                     </Stack>
@@ -238,8 +387,9 @@ export default function Staking() {
                                             id="outlined-number"
                                             label="Enter Amount"
                                             type="number"
+                                            onChange={(e) => setUnStakeToken(e.target.value)}
                                         />
-                                        <StakeButton variant="contained">Unstake</StakeButton>
+                                        <StakeButton onClick={connectedAddress ? unStakeTokens : connectToMetaMask} variant="contained">Unstake</StakeButton>
                                     </Stack>
                                 </div>
                             )}
@@ -253,8 +403,9 @@ export default function Staking() {
                                             id="outlined-number"
                                             label="Enter Amount"
                                             type="number"
+                                            onChange={(e) => setUserClaimableTokens(e.target.value)}
                                         />
-                                        <StakeButton variant="contained">Claim</StakeButton>
+                                        <StakeButton onClick={connectedAddress ? claimRewards : connectToMetaMask} variant="contained">Claim</StakeButton>
                                     </Stack>
                                 </div>
                             )}
