@@ -1,5 +1,4 @@
 import { useState,useEffect } from 'react';
-import Web3 from 'web3';
 import { Box, Button, Grid, Stack, styled, TextField } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { ethers } from "ethers";
