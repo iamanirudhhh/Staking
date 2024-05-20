@@ -22,7 +22,8 @@ export default function Staking() {
     const [userStakedToken, setUserStakedToken] = useState();
     const [userClaimableTokens, setUserClaimableTokens] = useState();
     const [unStakeToken, setUnStakeToken] = useState();
-
+    const [stakeToken, setStakeToken] = useState();
+    const [claimToken, setClaimToken] = useState("");
 
     let userAddress;
 
@@ -87,9 +88,9 @@ export default function Staking() {
 
         // Instantiate the token contract
         const tokenContract = new ethers.Contract(tokenData.Dscaddress, tokenData.abi, signer);
-
+        console.log(stakeToken);
         // Approve the staking contract to spend tokens on behalf of the user
-        const amountInWei = ethers.utils.parseEther(userStakedToken);
+        const amountInWei = ethers.utils.parseEther(stakeToken);
         console.log(amountInWei);
         const approvalTx = await tokenContract.approve(stakingData.address, amountInWei);
         await approvalTx.wait();
@@ -180,7 +181,7 @@ export default function Staking() {
             signer
         );
         
-        const amountToClaim = userClaimableTokens;
+        const amountToClaim = claimToken;
         const amountToClaimInWei = ethers.utils.parseEther(
         amountToClaim.toString(),
         );
@@ -370,7 +371,7 @@ export default function Staking() {
                                             id="outlined-number"
                                             label="Enter Amount"
                                             type="number"
-                                            onChange={(e) => setUserStakedToken(e.target.value)}
+                                            onChange={(e) => setStakeToken(e.target.value)}
                                         />
                                         <StakeButton onClick={connectedAddress ? stakeTokens : connectToMetaMask} variant="contained">Stake</StakeButton>
                                     </Stack>
@@ -402,8 +403,54 @@ export default function Staking() {
                                             id="outlined-number"
                                             label="Enter Amount"
                                             type="number"
-                                            onChange={(e) => setUserClaimableTokens(e.target.value)}
+                                            value={claimToken}
                                         />
+                                        <Stack spacing={2} direction="row">
+                                            <Button onClick={() => {
+                                                    try {
+                                                        
+                                                       const claimUserReward = userClaimableTokens * 0.25;
+                                                       setClaimToken(claimUserReward);
+                                                       console.log(claimUserReward);
+                                                        
+                                                    } catch (error) {
+                                                        alert("Error");
+                                                    }
+                                                    }}sx={{ width: 100 }} variant = "outlined">25%</Button>
+                                            <Button onClick={() => {
+                                                    try {
+                                                        
+                                                       const claimUserReward = userClaimableTokens * 0.50;
+                                                       setClaimToken(claimUserReward);
+                                                       console.log(claimUserReward);
+                                                        
+                                                    } catch (error) {
+                                                        alert("Error");
+                                                    }
+                                                    }} sx={{ width: 100 }}variant = "outlined">50%</Button>
+                                            <Button onClick={() => {
+                                                    try {
+                                                        
+                                                       const claimUserReward = userClaimableTokens * 0.75;
+                                                       setClaimToken(claimUserReward);
+                                                       console.log(claimUserReward);
+                                                        
+                                                    } catch (error) {
+                                                        alert("Error");
+                                                    }
+                                                    }} sx={{ width: 100 }} variant = "outlined">75%</Button>
+                                            <Button onClick={() => {
+                                                    try {
+                                                        
+                                                       const claimUserReward = userClaimableTokens * 1;
+                                                       setClaimToken(claimUserReward);
+                                                       console.log(claimUserReward);
+                                                        
+                                                    } catch (error) {
+                                                        alert("Error");
+                                                    }
+                                                    }} sx={{ width: 100 }}variant = "outlined">100%</Button>
+                                        </Stack>
                                         <StakeButton onClick={connectedAddress ? claimRewards : connectToMetaMask} variant="contained">Claim</StakeButton>
                                     </Stack>
                                 </div>
