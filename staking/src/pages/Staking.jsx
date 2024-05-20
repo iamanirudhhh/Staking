@@ -13,266 +13,267 @@ import stakingData  from '../components/StakingContract.json';
 
 export default function Staking() {
 
-    const [connectedAddress, setConnectedAddress] = useState(null);
-    const [tokenImported, setTokenImported] = useState(false); 
-    const [showStakeForm, setShowStakeForm] = useState(true);
-    const [showUnstakeForm, setShowUnstakeForm] = useState(false);
-    const [showClaimRewardForm, setShowClaimRewardForm] = useState(false);
-    const [userTotalDscBalance, setUserTotalDscBalance] = useState();
-    const [userStakedToken, setUserStakedToken] = useState();
-    const [userClaimableTokens, setUserClaimableTokens] = useState();
-    const [unStakeToken, setUnStakeToken] = useState();
+    // const [connectedAddress, setConnectedAddress] = useState(null);
+    // const [tokenImported, setTokenImported] = useState(false); 
+    // const [showStakeForm, setShowStakeForm] = useState(true);
+    // const [showUnstakeForm, setShowUnstakeForm] = useState(false);
+    // const [showClaimRewardForm, setShowClaimRewardForm] = useState(false);
+    // const [userTotalDscBalance, setUserTotalDscBalance] = useState();
+    // const [userStakedToken, setUserStakedToken] = useState();
+    // const [userClaimableTokens, setUserClaimableTokens] = useState();
+    // const [unStakeToken, setUnStakeToken] = useState();
 
 
-    let userAddress;
+    // let userAddress;
 
-    useEffect(() => {
-        if (!connectedAddress) {
-            connectToMetaMask();
-        } 
-        else if (connectedAddress) 
-        {
+    // useEffect(() => {
+    //     if (!connectedAddress) {
+    //         connectToMetaMask();
+    //     } 
+    //     else if (connectedAddress) 
+    //     {
 
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            const signer = provider.getSigner();    
-            userAddress = connectedAddress;
-            let USERADDRESS = userAddress;
-            console.log(USERADDRESS);
-            const fetchData = async () => {
-            try {
-              const DscAddress = tokenData.Dscaddress;
-              const DscABI = tokenData.abi;
-              const DscStakingAddress = stakingData.address;
-              const DscStakingABI = stakingData.abi;
-              const dscInstance = new ethers.Contract(
-                DscAddress,
-                DscABI,
-                signer
-              );
-              const stakingInstance = new ethers.Contract(
-                DscStakingAddress,
-                DscStakingABI,
-                signer
-              );
-              const userTokenBalance = await dscInstance.balanceOf(USERADDRESS);
-              const formattedBalance = ethers.utils.formatUnits(userTokenBalance);
-              setUserTotalDscBalance(formattedBalance);
-              const userStakedTokens =
-                await stakingInstance.AddressToStakingDetails(USERADDRESS);
-              const finalTotalStakedTokens = ethers.utils.formatUnits(
-                userStakedTokens.stakedAmount
-              );
-              setUserStakedToken(finalTotalStakedTokens);
-              const finalClaimableTokens = ethers.utils.formatUnits(
-                userStakedTokens.claimableRewards
-              );
-              let resultString = finalClaimableTokens.toString().slice(0, 8);
-              setUserClaimableTokens(resultString);
-            } catch (error) {
-              console.error("Error fetching data:", error.message);
-            }
-          };
-          fetchData();
-        }
-      }, [userTotalDscBalance, userStakedToken, userClaimableTokens, connectedAddress]);
+    //         const provider = new ethers.providers.Web3Provider(window.ethereum);
+    //         const signer = provider.getSigner();    
+    //         userAddress = connectedAddress;
+    //         let USERADDRESS = userAddress;
+    //         console.log(USERADDRESS);
+    //         const fetchData = async () => {
+    //         try {
+    //           const DscAddress = tokenData.Dscaddress;
+    //           const DscABI = tokenData.abi;
+    //           const DscStakingAddress = stakingData.address;
+    //           const DscStakingABI = stakingData.abi;
+    //           const dscInstance = new ethers.Contract(
+    //             DscAddress,
+    //             DscABI,
+    //             signer
+    //           );
+    //           const stakingInstance = new ethers.Contract(
+    //             DscStakingAddress,
+    //             DscStakingABI,
+    //             signer
+    //           );
+    //           const userTokenBalance = await dscInstance.balanceOf(USERADDRESS);
+    //           const formattedBalance = ethers.utils.formatUnits(userTokenBalance);
+    //           setUserTotalDscBalance(formattedBalance);
+    //           const userStakedTokens =
+    //             await stakingInstance.AddressToStakingDetails(USERADDRESS);
+    //           const finalTotalStakedTokens = ethers.utils.formatUnits(
+    //             userStakedTokens.stakedAmount
+    //           );
+    //           setUserStakedToken(finalTotalStakedTokens);
+    //           const finalClaimableTokens = ethers.utils.formatUnits(
+    //             userStakedTokens.claimableRewards
+    //           );
+    //           let resultString = finalClaimableTokens.toString().slice(0, 8);
+    //           setUserClaimableTokens(resultString);
+    //         } catch (error) {
+    //           console.error("Error fetching data:", error.message);
+    //         }
+    //       };
+    //       fetchData();
+    //     }
+    //   }, [userTotalDscBalance, userStakedToken, userClaimableTokens, connectedAddress]);
 
-    const stakeTokens = async () => {
-        if (!connectedAddress ||!userStakedToken) {
-            alert("error");
-        }
+    // const stakeTokens = async () => {
+    //     if (!connectedAddress ||!userStakedToken) {
+    //         alert("error");
+    //     }
 
-        // Create a provider and signer
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
+    //     // Create a provider and signer
+    //     const provider = new ethers.providers.Web3Provider(window.ethereum);
+    //     const signer = provider.getSigner();
 
-        // Instantiate the token contract
-        const tokenContract = new ethers.Contract(tokenData.Dscaddress, tokenData.abi, signer);
+    //     // Instantiate the token contract
+    //     const tokenContract = new ethers.Contract(tokenData.Dscaddress, tokenData.abi, signer);
 
-        // Approve the staking contract to spend tokens on behalf of the user
-        const amountInWei = ethers.utils.parseEther(userStakedToken);
-        console.log(amountInWei);
-        const approvalTx = await tokenContract.approve(stakingData.address, amountInWei);
-        await approvalTx.wait();
+    //     // Approve the staking contract to spend tokens on behalf of the user
+    //     const amountInWei = ethers.utils.parseEther(userStakedToken);
+    //     console.log(amountInWei);
+    //     const approvalTx = await tokenContract.approve(stakingData.address, amountInWei);
+    //     await approvalTx.wait();
 
-        // Instantiate the staking contract
-        const stakingContract = new ethers.Contract(stakingData.address, stakingData.abi, signer);
+    //     // Instantiate the staking contract
+    //     const stakingContract = new ethers.Contract(stakingData.address, stakingData.abi, signer);
         
-        // Stake the approved amount of tokens
-        const stakeTx = await stakingContract.stakeTokens(amountInWei);
-        await stakeTx.wait();
+    //     // Stake the approved amount of tokens
+    //     const stakeTx = await stakingContract.stakeTokens(amountInWei);
+    //     await stakeTx.wait();
 
-        console.log(`Successfully staked ${amountInWei} tokens.`);
-    };
+    //     console.log(`Successfully staked ${amountInWei} tokens.`);
+    // };
 
-    const updaterewards = async () => {
-        try {
+    // const updaterewards = async () => {
+    //     try {
 
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            const signer = provider.getSigner();
+    //         const provider = new ethers.providers.Web3Provider(window.ethereum);
+    //         const signer = provider.getSigner();
     
-          const DscStakingAddress = stakingData.address;
-          const DscStakingABI = stakingData.abi;
-          const stakingInstance = new ethers.Contract(
-            DscStakingAddress,
-            DscStakingABI,
-            signer
-          );
-          await stakingInstance.calcuateRewards(connectedAddress);
-          const userStakedTokens = await stakingInstance.AddressToStakingDetails(
-            connectedAddress
-          );
-          const finalClaimableTokens = ethers.utils.formatUnits(
-            userStakedTokens.claimableRewards
-          );
-          let resultString = finalClaimableTokens.toString().slice(0, 8);
-          if (resultString > 0) {
-            setUserClaimableTokens(resultString);
-          } else setUserClaimableTokens("0.0");
-        } catch (err) {
-          console.log("error", err.message);
-        }
-      };
+    //       const DscStakingAddress = stakingData.address;
+    //       const DscStakingABI = stakingData.abi;
+    //       const stakingInstance = new ethers.Contract(
+    //         DscStakingAddress,
+    //         DscStakingABI,
+    //         signer
+    //       );
+    //       await stakingInstance.calcuateRewards(connectedAddress);
+    //       const userStakedTokens = await stakingInstance.AddressToStakingDetails(
+    //         connectedAddress
+    //       );
+    //       const finalClaimableTokens = ethers.utils.formatUnits(
+    //         userStakedTokens.claimableRewards
+    //       );
+    //       let resultString = finalClaimableTokens.toString().slice(0, 8);
+    //       if (resultString > 0) {
+    //         setUserClaimableTokens(resultString);
+    //       } else setUserClaimableTokens("0.0");
+    //     } catch (err) {
+    //       console.log("error", err.message);
+    //     }
+    //   };
 
-    const unStakeTokens = async () => {
-    try {
-        if (!connectedAddress ) {
-            connectToMetaMask();
-        }
-        // console.log("Inside Unstaking..")
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
+    // const unStakeTokens = async () => {
+    // try {
+    //     if (!connectedAddress ) {
+    //         connectToMetaMask();
+    //     }
+    //     // console.log("Inside Unstaking..")
+    //     const provider = new ethers.providers.Web3Provider(window.ethereum);
+    //     const signer = provider.getSigner();
 
-        const DscStakingAddress = stakingData.address;
-        const DscStakingABI = stakingData.abi;
-        const stakingInstance = new ethers.Contract(
-            DscStakingAddress,
-            DscStakingABI,
-            signer
-        );
+    //     const DscStakingAddress = stakingData.address;
+    //     const DscStakingABI = stakingData.abi;
+    //     const stakingInstance = new ethers.Contract(
+    //         DscStakingAddress,
+    //         DscStakingABI,
+    //         signer
+    //     );
 
-        const amountToUnstake = unStakeToken;
-        const amountToUnstakeInWei = ethers.utils.parseEther(
-        amountToUnstake.toString()
-        );
-        await stakingInstance.unStakeTokens(amountToUnstakeInWei);
-        setUnStakeToken(" ");
-    } catch (err) {
-        console.log("error", err.message);
-    }
-    };
+    //     const amountToUnstake = unStakeToken;
+    //     const amountToUnstakeInWei = ethers.utils.parseEther(
+    //     amountToUnstake.toString()
+    //     );
+    //     await stakingInstance.unStakeTokens(amountToUnstakeInWei);
+    //     setUnStakeToken(" ");
+    // } catch (err) {
+    //     console.log("error", err.message);
+    // }
+    // };
     
-    const claimRewards = async () => {
-    try {
-        if (!connectedAddress ) {
-            connectToMetaMask();
-        }
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
+    // const claimRewards = async () => {
+    // try {
+    //     if (!connectedAddress ) {
+    //         connectToMetaMask();
+    //     }
+    //     const provider = new ethers.providers.Web3Provider(window.ethereum);
+    //     const signer = provider.getSigner();
         
 
-        const DscAddress = tokenData.Dscaddress;
-        const DscABI = tokenData.abi;
-        const DscStakingAddress = stakingData.address;
-        const DscStakingABI = stakingData.abi;
-        const stakingInstance = new ethers.Contract(
-            DscStakingAddress,
-            DscStakingABI,
-            signer
-        );
+    //     const DscAddress = tokenData.Dscaddress;
+    //     const DscABI = tokenData.abi;
+    //     const DscStakingAddress = stakingData.address;
+    //     const DscStakingABI = stakingData.abi;
+    //     const stakingInstance = new ethers.Contract(
+    //         DscStakingAddress,
+    //         DscStakingABI,
+    //         signer
+    //     );
         
-        const amountToClaim = userClaimableTokens;
-        const amountToClaimInWei = ethers.utils.parseEther(
-        amountToClaim.toString(),
-        );
-        console.log(amountToClaimInWei);
-        await stakingInstance.claimRewards(amountToClaimInWei);
-        setClaimToken(" ");
-    } catch (error) {}
-    };
+    //     const amountToClaim = userClaimableTokens;
+    //     const amountToClaimInWei = ethers.utils.parseEther(
+    //     amountToClaim.toString(),
+    //     );
+    //     console.log(amountToClaimInWei);
+    //     await stakingInstance.claimRewards(amountToClaimInWei);
+    //     setClaimToken(" ");
+    // } catch (error) {}
+    // };
 
-    const handleButtonClick = () => 
-        {
-        if (connectedAddress) {
-            disconnectFromMetaMask();
-        } else {
-            connectToMetaMask();
-        }
-    };
+    // const handleButtonClick = () => 
+    //     {
+    //     if (connectedAddress) {
+    //         disconnectFromMetaMask();
+    //     } else {
+    //         connectToMetaMask();
+    //     }
+    // };
 
-    const connectToMetaMask = async () => {
-        try {
-            if (window.ethereum) {
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                console.log("MetaMask connected!");
-                setConnectedAddress(accounts[0]);
-            }
-        } catch (error) {
-            console.error("Error connecting to MetaMask:", error);
-        }
-    };
+    // const connectToMetaMask = async () => {
+    //     try {
+    //         if (window.ethereum) {
+    //             const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    //             console.log("MetaMask connected!");
+    //             setConnectedAddress(accounts[0]);
+    //         }
+    //     } catch (error) {
+    //         console.error("Error connecting to MetaMask:", error);
+    //     }
+    // };
 
-    const addTokenToMetaMask = async () => {
-        try {
-            if (!connectedAddress) {
-                console.log("Please connect to MetaMask first.");
-                return;
-            }
+    // const addTokenToMetaMask = async () => {
+    //     try {
+    //         if (!connectedAddress) {
+    //             console.log("Please connect to MetaMask first.");
+    //             return;
+    //         }
             
-            if (!window.ethereum || !window.ethereum.isMetaMask) {
-                console.log("MetaMask is not installed.");
-                return;
-            }
+    //         if (!window.ethereum || !window.ethereum.isMetaMask) {
+    //             console.log("MetaMask is not installed.");
+    //             return;
+    //         }
 
-            await window.ethereum.request({
-                method: 'wallet_watchAsset',
-                params: {
-                    type: 'ERC20',
-                    options: {
-                        address: "0xbf7f01B763B1486F6CAc76464334a1E02A490B1A", 
-                        symbol: 'DSC' , 
-                        decimals: 18, 
-                    }
-                }
-            });
+    //         await window.ethereum.request({
+    //             method: 'wallet_watchAsset',
+    //             params: {
+    //                 type: 'ERC20',
+    //                 options: {
+    //                     address: "0xbf7f01B763B1486F6CAc76464334a1E02A490B1A", 
+    //                     symbol: 'DSC' , 
+    //                     decimals: 18, 
+    //                 }
+    //             }
+    //         });
 
-            console.log("Token added to MetaMask successfully.");
-            setTokenImported(true); 
-        } catch (error) {
-            console.error("Error adding token to MetaMask:", error);
-            alert("Failed to add token. Please try again.");
-        }
-    };
+    //         console.log("Token added to MetaMask successfully.");
+    //         setTokenImported(true); 
+    //     } catch (error) {
+    //         console.error("Error adding token to MetaMask:", error);
+    //         alert("Failed to add token. Please try again.");
+    //     }
+    // };
 
-    const disconnectFromMetaMask = () => {
-        setConnectedAddress(null);
-        setTokenImported(false); 
-        setUserTotalDscBalance(null);
-        console.log("Disconnected from MetaMask");
-    };
+    // const disconnectFromMetaMask = () => {
+    //     setConnectedAddress(null);
+    //     setTokenImported(false); 
+    //     setUserTotalDscBalance(null);
+    //     console.log("Disconnected from MetaMask");
+    // };
     
 
-    const showStakeFormHandler = () => {
-        setShowStakeForm(true);
-        setShowUnstakeForm(false);
-        setShowClaimRewardForm(false);
-    };
+    // const showStakeFormHandler = () => {
+    //     setShowStakeForm(true);
+    //     setShowUnstakeForm(false);
+    //     setShowClaimRewardForm(false);
+    // };
 
-    const showUnstakeFormHandler = () => {
-        setShowStakeForm(false);
-        setShowUnstakeForm(true);
-        setShowClaimRewardForm(false);
-    };
+    // const showUnstakeFormHandler = () => {
+    //     setShowStakeForm(false);
+    //     setShowUnstakeForm(true);
+    //     setShowClaimRewardForm(false);
+    // };
 
-    const showClaimRewardFormHandler = () => {
-        setShowStakeForm(false);
-        setShowUnstakeForm(false);
-        setShowClaimRewardForm(true);
-    };
+    // const showClaimRewardFormHandler = () => {
+    //     setShowStakeForm(false);
+    //     setShowUnstakeForm(false);
+    //     setShowClaimRewardForm(true);
+    // };
 
 
     return (
         <>
-            <Stack marginTop={3} spacing={5} direction="row" justifyContent="flex-end" paddingRight={5}>
+        <h2>hello</h2>
+            {/* <Stack marginTop={3} spacing={5} direction="row" justifyContent="flex-end" paddingRight={5}>
                 <ColorButton variant="contained" onClick={addTokenToMetaMask} disabled={tokenImported} > 
                     {tokenImported ? "Token Imported Successfully" : "Add DSC To Wallet"} 
                 </ColorButton>
@@ -411,7 +412,7 @@ export default function Staking() {
                         </div>
                     </Grid>
                 </Grid>
-            </Box>
+            </Box> */}
             
         </>
     );
